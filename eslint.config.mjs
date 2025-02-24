@@ -1,16 +1,20 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import config from '@rocketseat/eslint-config/react.mjs'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+export default config
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+// import { dirname } from "path";
+// import { fileURLToPath } from "url";
+// import { FlatCompat } from "@eslint/eslintrc";
 
-const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
-];
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
 
-export default eslintConfig;
+// const compat = new FlatCompat({
+//   baseDirectory: __dirname,
+// });
+
+// const eslintConfig = [
+//   ...compat.extends("next/core-web-vitals", "next/typescript"),
+// ];
+
+// export default eslintConfig;
