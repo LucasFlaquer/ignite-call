@@ -1,6 +1,7 @@
 import { Form } from '@/pages/home/components/ClaimUsernameForm/styles'
 import { Button, TextInput } from '@ignite-ui/react'
-import { ArrowRight } from '@phosphor-icons/react'
+import { ArrowRight } from 'phosphor-react'
+
 
 export function ClaimUsernameForm() {
   return (
