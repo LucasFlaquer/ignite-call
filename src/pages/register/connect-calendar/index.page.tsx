@@ -10,7 +10,7 @@ import { ArrowRight, Check } from 'phosphor-react'
 
 import { Container, Header } from '../styles'
 
-export default function Register() {
+export default function ConnectCalendar() {
   const session = useSession()
   const router = useRouter()
 
