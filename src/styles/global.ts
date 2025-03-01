@@ -2,7 +2,7 @@ import { globalCss } from '@ignite-ui/react'
 
 export const globalStyles = globalCss({
   '*': {
-    boxSixing: 'border-box',
+    boxSizing: 'border-box',
     padding: 0,
     margin: 0,
   },
