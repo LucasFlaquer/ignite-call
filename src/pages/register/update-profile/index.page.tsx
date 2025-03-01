@@ -1,3 +1,4 @@
+import { api } from '@/lib/axios'
 import { buildNextAuthOptions } from '@/pages/api/auth/[...nextauth].api'
 import { Container, Header } from '@/pages/register/styles'
 import {
@@ -5,10 +6,19 @@ import {
   ProfileBox,
 } from '@/pages/register/update-profile/styles'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Button, Heading, MultiStep, Text, TextArea } from '@ignite-ui/react'
+import {
+  Avatar,
+  Button,
+  Heading,
+  MultiStep,
+  Text,
+  TextArea,
+} from '@ignite-ui/react'
 import { GetServerSideProps } from 'next'
+// eslint-disable-next-line camelcase
 import { unstable_getServerSession } from 'next-auth'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
 import { ArrowRight } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -29,9 +39,13 @@ export default function Register() {
     defaultValues: {},
   })
   const session = useSession()
-  console.log(session)
+  const router = useRouter()
+
   async function handleUpdateProfile(data: UpdateProfileFormData) {
-    console.log(data)
+    await api.put('/users/profile', {
+      bio: data.bio,
+    })
+    await router.push(`/schedule/${session.data?.user.username}`)
   }
 
   return (
@@ -47,10 +61,15 @@ export default function Register() {
       <ProfileBox as="form" onSubmit={handleSubmit(handleUpdateProfile)}>
         <label htmlFor="">
           <Text>Foto de perfil</Text>
+          <Avatar
+            src={session.data?.user.avatar_url}
+            alt={session.data?.user.name}
+            referrerPolicy="no-referrer"
+          />
         </label>
         <label>
           <Text size="sm">Sobre você</Text>
-          <TextArea placeholder="seu nome" {...register('bio')} />
+          <TextArea {...register('bio')} />
           <FormAnnotation size="sm">
             Fale um pouco sobre você. Isto será exibido em sua página pessoal.
           </FormAnnotation>
