@@ -1,4 +1,4 @@
-import { Container, Header } from '@/pages/register/styles'
+import { Container, Form, Header } from '@/pages/register/styles'
 import {
   FormError,
   IntervalBox,
@@ -7,6 +7,7 @@ import {
   IntervalItem,
   IntervalsContainer,
 } from '@/pages/register/time-intervals/styles'
+import { convertTimeStringToMinutes } from '@/utils/convert-time-string-to-minutes'
 import { getWeekDays } from '@/utils/get-week-days'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
@@ -35,10 +36,30 @@ const timeIntervalsFormSchema = z.object({
     .transform((intervals) => intervals.filter((interval) => interval.enabled))
     .refine((intervals) => intervals.length > 0, {
       message: 'Você precisa selecionar pelo menos um dia da semana',
-    }),
+    })
+    .transform((intervals) =>
+      intervals.map((interval) => ({
+        weekDay: interval.weekDay,
+        startTimeInMinutes: convertTimeStringToMinutes(interval.startTime),
+        endTimeInMinutes: convertTimeStringToMinutes(interval.endTime),
+      })),
+    )
+    .refine(
+      (intervals) => {
+        return intervals.every(
+          (interval) =>
+            interval.endTimeInMinutes - 60 >= interval.startTimeInMinutes,
+        )
+      },
+      {
+        message:
+          'O horário de término deve ser pelo menos 1h distante do início',
+      },
+    ),
 })
 
-type TimeIntervalsFormData = z.infer<typeof timeIntervalsFormSchema>
+type TimeIntervalsFormInput = z.input<typeof timeIntervalsFormSchema>
+type TimeIntervalsFormOutput = z.infer<typeof timeIntervalsFormSchema>
 
 export default function TimeIntervals() {
   const {
@@ -47,7 +68,7 @@ export default function TimeIntervals() {
     watch,
     formState: { isSubmitting, errors },
     control,
-  } = useForm<TimeIntervalsFormData>({
+  } = useForm<TimeIntervalsFormInput, unknown, TimeIntervalsFormOutput>({
     resolver: zodResolver(timeIntervalsFormSchema),
     defaultValues: {
       intervals: [
@@ -71,7 +92,7 @@ export default function TimeIntervals() {
 
   const intervals = watch('intervals')
 
-  function handleSetTimeIntervals(data: TimeIntervalsFormData) {
+  function handleSetTimeIntervals(data: TimeIntervalsFormOutput) {
     console.log(data)
   }
 
