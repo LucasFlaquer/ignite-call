@@ -1,3 +1,4 @@
+import { api } from '@/lib/axios'
 import { Container, Form, Header } from '@/pages/register/styles'
 import {
   FormError,
@@ -92,8 +93,10 @@ export default function TimeIntervals() {
 
   const intervals = watch('intervals')
 
-  function handleSetTimeIntervals(data: TimeIntervalsFormOutput) {
-    console.log(data)
+  async function handleSetTimeIntervals({
+    intervals,
+  }: TimeIntervalsFormOutput) {
+    await api.post('/users/time-intervals', { intervals })
   }
 
   return (
