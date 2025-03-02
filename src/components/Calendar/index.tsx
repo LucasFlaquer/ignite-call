@@ -18,7 +18,12 @@ interface CalendarWeek {
 
 type CalendarWeeks = CalendarWeek[]
 
-export function Calendar() {
+interface Props {
+  selectedDate: Date | null
+  onDateSelected: (date: Date) => void
+}
+
+export function Calendar({ selectedDate, onDateSelected }: Props) {
   const [currentDate, setCurrentDate] = useState(() => {
     return dayjs().set('date', 1)
   })
@@ -57,7 +62,10 @@ export function Calendar() {
     }).map((_, i) => lastDayInCurrentMonth.add(i + 1, 'day'))
     const calendarDays = [
       ...previousMonthFillArray.map((date) => ({ date, disabled: true })),
-      ...daysInMonthArray.map((date) => ({ date, disabled: false })),
+      ...daysInMonthArray.map((date) => ({
+        date,
+        disabled: date.endOf('day').isBefore(new Date()),
+      })),
       ...nextMonthFillArray.map((date) => ({ date, disabled: true })),
     ]
     const calendarWeeks = calendarDays.reduce<CalendarWeeks>(
@@ -75,9 +83,6 @@ export function Calendar() {
     )
     return calendarWeeks
   }, [currentDate])
-
-  console.log(calendarWeeks)
-
   return (
     <CalendarContainer>
       <CalendarHeader>
@@ -104,10 +109,13 @@ export function Calendar() {
         <tbody>
           {calendarWeeks.map((week) => (
             <tr key={week.week}>
-              {week.days.map((day) => (
-                <td key={day.date.toISOString()}>
-                  <CalendarDay disabled={day.disabled}>
-                    {day.date.get('date')}
+              {week.days.map(({ date, disabled }) => (
+                <td key={date.toISOString()}>
+                  <CalendarDay
+                    onClick={() => onDateSelected(date.toDate())}
+                    disabled={disabled}
+                  >
+                    {date.get('date')}
                   </CalendarDay>
                 </td>
               ))}
