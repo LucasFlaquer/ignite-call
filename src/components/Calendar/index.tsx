@@ -16,6 +16,7 @@ import { useMemo, useState } from 'react'
 
 interface BlockedDates {
   blockedWeekDays: number[]
+  blockedDates: number[]
 }
 
 interface CalendarWeek {
@@ -58,7 +59,7 @@ export function Calendar({ selectedDate, onDateSelected }: Props) {
       const response = await api.get(`/users/${username}/blocked-dates`, {
         params: {
           year: currentDate.get('year'),
-          month: currentDate.get('month'),
+          month: String(currentDate.get('month') + 1).padStart(2, '0'),
         },
       })
       return response.data
@@ -84,6 +85,7 @@ export function Calendar({ selectedDate, onDateSelected }: Props) {
     const nextMonthFillArray = Array.from({
       length: 7 - (lastWeekDay + 1),
     }).map((_, i) => lastDayInCurrentMonth.add(i + 1, 'day'))
+
     const calendarDays = [
       ...previousMonthFillArray.map((date) => {
         return { date, disabled: true }
@@ -93,7 +95,8 @@ export function Calendar({ selectedDate, onDateSelected }: Props) {
           date,
           disabled:
             date.endOf('day').isBefore(new Date()) ||
-            blockedDates.blockedWeekDays.includes(date.get('day')),
+            blockedDates.blockedWeekDays.includes(date.get('day')) ||
+            blockedDates.blockedDates.includes(date.get('date')),
         }
       }),
       ...nextMonthFillArray.map((date) => {
