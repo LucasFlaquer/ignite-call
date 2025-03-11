@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import { Container, Form, Header } from '@/pages/register/styles'
+import { Container, Header } from '@/pages/register/styles'
 import {
   FormError,
   IntervalBox,
@@ -10,7 +10,7 @@ import {
 } from '@/pages/register/time-intervals/styles'
 import { convertTimeStringToMinutes } from '@/utils/convert-time-string-to-minutes'
 import { getWeekDays } from '@/utils/get-week-days'
-import { zodResolver } from '@hookform/resolvers/zod'
+
 import {
   Button,
   Checkbox,
@@ -21,9 +21,10 @@ import {
 } from '@ignite-ui/react'
 import { NextSeo } from 'next-seo'
 import { useRouter } from 'next/router'
-import { ArrowRight } from 'phosphor-react'
+import { ArrowRight } from '@phosphor-icons/react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 const timeIntervalsFormSchema = z.object({
   intervals: z
@@ -62,7 +63,7 @@ const timeIntervalsFormSchema = z.object({
 })
 
 type TimeIntervalsFormInput = z.input<typeof timeIntervalsFormSchema>
-type TimeIntervalsFormOutput = z.infer<typeof timeIntervalsFormSchema>
+type TimeIntervalsFormOutput = z.output<typeof timeIntervalsFormSchema>
 
 export default function TimeIntervals() {
   const {
@@ -71,7 +72,7 @@ export default function TimeIntervals() {
     watch,
     formState: { isSubmitting, errors },
     control,
-  } = useForm<TimeIntervalsFormInput, unknown, TimeIntervalsFormOutput>({
+  } = useForm<TimeIntervalsFormInput, any, TimeIntervalsFormOutput>({
     resolver: zodResolver(timeIntervalsFormSchema),
     defaultValues: {
       intervals: [
